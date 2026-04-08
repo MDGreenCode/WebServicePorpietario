@@ -118,7 +118,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 import os
-import dj_database_url
+
 
 DEBUG = False
 
@@ -128,13 +128,5 @@ ALLOWED_HOSTS = ['*']
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    ...
-]
 
-# Base de datos (Render usa PostgreSQL)
-DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
-}
+

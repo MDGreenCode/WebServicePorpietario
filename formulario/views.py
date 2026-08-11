@@ -1,23 +1,9 @@
-from django.shortcuts import render, redirect
-from .forms import SolicitudForm
-
-def crear_solicitud(request):
-    if request.method == 'POST':
-        form = SolicitudForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('success')
-    else:
-        form = SolicitudForm()
-
-    return render(request, 'formulario/formulario.html', {'form': form})
-
-
-def success(request):
-    return render(request, 'formulario/success.html')
-
+from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import inlineformset_factory
+
+from .forms import SolicitudForm
 from .models import Solicitud, Educacion, Experiencia
+
 
 def crear_solicitud(request):
 
@@ -49,4 +35,28 @@ def crear_solicitud(request):
         'form': form,
         'formset_edu': formset_edu,
         'formset_exp': formset_exp,
+    })
+
+
+def success(request):
+    return render(request, 'formulario/success.html')
+
+
+def listado_solicitudes(request):
+    """Muestra un listado con todas las solicitudes guardadas."""
+    solicitudes = Solicitud.objects.all().order_by('-id')
+    return render(request, 'formulario/listado.html', {
+        'solicitudes': solicitudes,
+    })
+
+
+def detalle_solicitud(request, pk):
+    """Muestra el detalle completo de una solicitud, incluyendo
+    su educación y experiencia laboral asociadas."""
+    solicitud = get_object_or_404(
+        Solicitud.objects.prefetch_related('educaciones', 'experiencias'),
+        pk=pk,
+    )
+    return render(request, 'formulario/detalle.html', {
+        'solicitud': solicitud,
     })
